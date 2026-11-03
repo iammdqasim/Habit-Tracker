@@ -36,20 +36,20 @@ export function CalendarPage() {
       <header className="mb-6 flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Overview</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">Calendar</h1>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-50">Calendar</h1>
         </div>
-        <div className="flex items-center gap-1 rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
+        <div className="flex items-center gap-1 rounded-2xl border border-slate-700 bg-slate-900 p-1 shadow-sm shadow-black/20">
           <button
             onClick={() => shift(-1)}
-            className="grid h-8 w-8 cursor-pointer place-items-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="grid h-8 w-8 cursor-pointer place-items-center rounded-xl text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
             aria-label="Previous month"
           >
             <Icon name="chevronLeft" size={16} />
           </button>
-          <span className="min-w-32 text-center text-sm font-bold text-slate-800">{monthLabel}</span>
+          <span className="min-w-32 text-center text-sm font-bold text-slate-100">{monthLabel}</span>
           <button
             onClick={() => shift(1)}
-            className="grid h-8 w-8 cursor-pointer place-items-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="grid h-8 w-8 cursor-pointer place-items-center rounded-xl text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
             aria-label="Next month"
           >
             <Icon name="chevronRight" size={16} />
@@ -62,7 +62,7 @@ export function CalendarPage() {
           key={viewMonth.toISOString()}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl border border-slate-200 bg-white p-3 shadow-sm shadow-slate-900/5 sm:p-4"
+          className="rounded-3xl border border-slate-800 bg-slate-900/80 p-3 shadow-sm shadow-black/20 sm:p-4"
         >
           <div className="mb-2 grid grid-cols-7 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400">
             {DAY_ORDER.map((d) => (
@@ -81,20 +81,20 @@ export function CalendarPage() {
                   key={i}
                   onClick={() => setSelected(dateStr)}
                   className={cn(
-                    'group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-sm transition-colors hover:border-slate-300 hover:bg-white',
+                    'group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-sm transition-colors hover:border-slate-700 hover:bg-slate-900',
                     !inMonth && 'opacity-40',
                   )}
                 >
                   {isToday && (
                     <span className="absolute inset-0 rounded-xl ring-2 ring-inset ring-emerald-500/70" />
                   )}
-                  <span className={cn('font-semibold text-slate-700', isToday && 'text-slate-900')}>
+                  <span className={cn('font-semibold text-slate-200', isToday && 'text-white')}>
                     {d.getDate()}
                   </span>
                   <span
                     className={cn(
                       'mt-1 h-1.5 w-1.5 rounded-full',
-                      hasHabits ? 'bg-emerald-500' : 'bg-slate-300 group-hover:bg-slate-400',
+                      hasHabits ? 'bg-emerald-500' : 'bg-slate-600 group-hover:bg-slate-500',
                     )}
                   />
                 </button>
@@ -107,7 +107,7 @@ export function CalendarPage() {
       <DayDetailModal date={selected} onClose={() => setSelected(null)} />
 
       <div className="mt-6">
-        <Button variant="outline" size="sm" onClick={() => setSelected(today)}>
+        <Button variant="outline" size="sm" onClick={() => setSelected(today)} className="border-slate-700 bg-slate-900 text-slate-100 hover:border-slate-600 hover:bg-slate-800">
           View today
         </Button>
       </div>
@@ -129,19 +129,19 @@ function DayDetailModal({ date, onClose }: { date: string | null; onClose: () =>
       className={due.length > 2 ? 'max-h-[85vh] overflow-y-auto' : ''}
     >
       {due.length === 0 ? (
-        <p className="py-6 text-center text-sm text-slate-500">No habits scheduled for this day.</p>
+        <p className="py-6 text-center text-sm text-slate-400">No habits scheduled for this day.</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {due.map((h) => (
             <li key={h.id}>
-              <div className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-left">
+              <div className="flex w-full items-center gap-3 rounded-xl border border-slate-800 bg-slate-950 px-3 py-3 text-left">
                 <span
                   className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
                   style={{ background: `${h.color}1a`, color: h.color }}
                 >
                   <Icon name={h.icon} size={15} />
                 </span>
-                <span className="text-sm font-medium text-slate-800">{h.title}</span>
+                <span className="text-sm font-medium text-slate-100">{h.title}</span>
               </div>
             </li>
           ))}
@@ -149,7 +149,7 @@ function DayDetailModal({ date, onClose }: { date: string | null; onClose: () =>
       )}
 
       {habits.length === 0 && (
-        <p className="text-center text-xs text-slate-500">Create habits from the Today tab.</p>
+        <p className="text-center text-xs text-slate-400">Create habits from the Today tab.</p>
       )}
     </Modal>
   )

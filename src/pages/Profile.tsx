@@ -33,14 +33,14 @@ export function ProfilePage() {
     <div className="mx-auto max-w-2xl px-4 pb-28 pt-6 sm:pb-10">
       <header className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Progress</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">Profile</h1>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-50">Profile</h1>
       </header>
 
-      <div className="mb-4 flex items-center gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-900/5">
+      <div className="mb-4 flex items-center gap-6 rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-sm shadow-black/20">
         <ProgressRing value={stats.disciplineScore} label="score" suffix="" size={116} />
         <div>
-          <p className="text-sm font-bold text-slate-900">Discipline score</p>
-          <p className="mt-1 text-xs leading-relaxed text-slate-500">
+          <p className="text-sm font-bold text-slate-100">Discipline score</p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-400">
             A blend of your streak and consistency — the higher the better.
           </p>
         </div>
@@ -53,8 +53,8 @@ export function ProfilePage() {
         <StatCard label="Success rate" value={`${stats.successRate30}`} sub="last 30 days" />
       </div>
 
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5">
-        <h2 className="mb-4 text-sm font-bold text-slate-800">Consistency — last 30 days</h2>
+      <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-sm shadow-black/20">
+        <h2 className="mb-4 text-sm font-bold text-slate-200">Consistency — last 30 days</h2>
         <div className="h-44 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 0 }}>
@@ -64,7 +64,7 @@ export function ProfilePage() {
                   <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
               <XAxis
                 dataKey="label"
                 tick={{ fill: '#94a3b8', fontSize: 10 }}
@@ -75,14 +75,14 @@ export function ProfilePage() {
               <YAxis domain={[0, 1]} ticks={[0, 1]} hide />
               <Tooltip
                 contentStyle={{
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
+                  background: '#0f172a',
+                  border: '1px solid #334155',
                   borderRadius: 12,
                   fontSize: 12,
-                  color: '#0f172a',
+                  color: '#e2e8f0',
                   boxShadow: '0 10px 30px -12px rgb(15 23 42 / 0.25)',
                 }}
-                labelStyle={{ color: '#64748b' }}
+                labelStyle={{ color: '#cbd5e1' }}
                 formatter={(value) => {
                   if (value == null) return 'No habits'
                   if (value === 1) return 'Full schedule'
@@ -93,7 +93,7 @@ export function ProfilePage() {
               <Area
                 type="stepAfter"
                 dataKey="value"
-                stroke="#059669"
+                stroke="#34d399"
                 strokeWidth={2}
                 fill="url(#gradSuccess)"
                 connectNulls={false}
@@ -106,10 +106,10 @@ export function ProfilePage() {
 
       <StreakHeatmap habits={habits} completions={completions} />
 
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5">
-        <h2 className="mb-4 text-sm font-bold text-slate-800">Habit breakdown</h2>
+      <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-sm shadow-black/20">
+        <h2 className="mb-4 text-sm font-bold text-slate-200">Habit breakdown</h2>
         {stats.habits.length === 0 ? (
-          <p className="text-sm text-slate-500">No active habits yet.</p>
+          <p className="text-sm text-slate-400">No active habits yet.</p>
         ) : (
           <ul className="flex flex-col gap-4">
             {stats.habits.map(({ habit, rate, scheduled }) => (
@@ -121,13 +121,13 @@ export function ProfilePage() {
                   >
                     <Icon name={habit.icon} size={15} />
                   </span>
-                  <span className="flex-1 truncate font-semibold text-slate-800">{habit.title}</span>
-                  <span className="tabular-nums text-xs text-slate-500">{scheduled} scheduled</span>
+                  <span className="flex-1 truncate font-semibold text-slate-100">{habit.title}</span>
+                  <span className="tabular-nums text-xs text-slate-400">{scheduled} scheduled</span>
                   <span className="w-10 text-right text-xs font-bold tabular-nums" style={{ color: habit.color }}>
                     {rate}%
                   </span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div className="h-1.5 overflow-hidden rounded-full bg-slate-800">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{ width: `${rate}%`, background: habit.color }}
@@ -140,12 +140,12 @@ export function ProfilePage() {
       </section>
 
       {archived.length > 0 && (
-        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5">
-          <h2 className="mb-3 text-sm font-bold text-slate-800">Archived ({archived.length})</h2>
-          {archiveError && <p className="mb-3 text-xs font-medium text-red-600">{archiveError}</p>}
+        <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-sm shadow-black/20">
+          <h2 className="mb-3 text-sm font-bold text-slate-200">Archived ({archived.length})</h2>
+          {archiveError && <p className="mb-3 text-xs font-medium text-red-400">{archiveError}</p>}
           <ul className="flex flex-col gap-2">
             {archived.map((h: Habit) => (
-              <li key={h.id} className="flex items-center gap-2 text-sm text-slate-500">
+              <li key={h.id} className="flex items-center gap-2 text-sm text-slate-400">
                 <span style={{ color: h.color }}>
                   <Icon name={h.icon} size={16} />
                 </span>
@@ -156,7 +156,7 @@ export function ProfilePage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-red-600 hover:bg-red-50"
+                  className="text-red-400 hover:bg-red-950/70"
                   onClick={async () => {
                     setArchiveError('')
                     try {
@@ -191,11 +191,11 @@ function StatCard({
   accent?: boolean
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-900/5">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-sm shadow-black/20">
       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
       <p
         className={
-          accent ? 'mt-1 text-2xl font-bold tabular-nums text-amber-600' : 'mt-1 text-2xl font-bold tabular-nums text-slate-900'
+          accent ? 'mt-1 text-2xl font-bold tabular-nums text-amber-400' : 'mt-1 text-2xl font-bold tabular-nums text-slate-100'
         }
       >
         {value}
@@ -211,8 +211,8 @@ const HEATMAP_DAYS = HEATMAP_WEEKS * 7
 const HEATMAP_COLORS: Record<DayStatus, string> = {
   all: 'bg-emerald-500',
   partial: 'bg-amber-500/70',
-  missed: 'bg-zinc-800',
-  neutral: 'bg-zinc-800/40',
+  missed: 'bg-zinc-700',
+  neutral: 'bg-zinc-800/70',
 }
 
 function StreakHeatmap({ habits, completions }: { habits: Habit[]; completions: Completion[] }) {
@@ -227,9 +227,9 @@ function StreakHeatmap({ habits, completions }: { habits: Habit[]; completions: 
   }, [habits, completions, today])
 
   return (
-    <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5">
+    <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-sm shadow-black/20">
       <div className="mb-4 flex items-baseline justify-between">
-        <h2 className="text-sm font-bold text-slate-800">Consistency heatmap</h2>
+        <h2 className="text-sm font-bold text-slate-200">Consistency heatmap</h2>
         <span className="text-[10px] text-slate-500">last {HEATMAP_WEEKS} weeks</span>
       </div>
 
@@ -242,7 +242,7 @@ function StreakHeatmap({ habits, completions }: { habits: Habit[]; completions: 
               className={cn(
                 'h-3 w-3 rounded-[3px] transition-colors',
                 HEATMAP_COLORS[c.status],
-                c.isToday && 'ring-2 ring-emerald-400 ring-offset-1 ring-offset-white',
+                c.isToday && 'ring-2 ring-emerald-400 ring-offset-1 ring-offset-slate-950',
               )}
             />
           ))}
@@ -251,8 +251,8 @@ function StreakHeatmap({ habits, completions }: { habits: Habit[]; completions: 
 
       <div className="mt-3 flex items-center justify-end gap-1.5 text-[10px] text-slate-500">
         <span>Less</span>
-        <span className="h-3 w-3 rounded-[3px] bg-zinc-800/40" />
-        <span className="h-3 w-3 rounded-[3px] bg-zinc-800" />
+        <span className="h-3 w-3 rounded-[3px] bg-zinc-800/70" />
+        <span className="h-3 w-3 rounded-[3px] bg-zinc-700" />
         <span className="h-3 w-3 rounded-[3px] bg-amber-500/70" />
         <span className="h-3 w-3 rounded-[3px] bg-emerald-500" />
         <span>More</span>
