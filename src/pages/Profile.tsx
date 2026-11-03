@@ -41,7 +41,7 @@ export function ProfilePage() {
         <div>
           <p className="text-sm font-bold text-slate-900">Discipline score</p>
           <p className="mt-1 text-xs leading-relaxed text-slate-500">
-            A blend of your streak, consistency and total ticks — the higher the better.
+            A blend of your streak and consistency — the higher the better.
           </p>
         </div>
       </div>
@@ -49,7 +49,7 @@ export function ProfilePage() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard label="Current streak" value={`${stats.currentStreak}`} sub="days" accent />
         <StatCard label="Longest streak" value={`${stats.longestStreak}`} sub="days" />
-        <StatCard label="Total ticks" value={stats.totalCompletions.toLocaleString()} sub="completed" />
+        <StatCard label="Active habits" value={habits.filter((h) => !h.archived).length.toLocaleString()} sub="tracked" />
         <StatCard label="Success rate" value={`${stats.successRate30}`} sub="last 30 days" />
       </div>
 
@@ -84,10 +84,10 @@ export function ProfilePage() {
                 }}
                 labelStyle={{ color: '#64748b' }}
                 formatter={(value) => {
-                  if (value == null) return 'Rest day'
-                  if (value === 1) return 'Complete day'
-                  if (value === 0.5) return 'Partial'
-                  return 'Missed'
+                  if (value == null) return 'No habits'
+                  if (value === 1) return 'Full schedule'
+                  if (value === 0.5) return 'Partial schedule'
+                  return 'Off track'
                 }}
               />
               <Area
@@ -112,7 +112,7 @@ export function ProfilePage() {
           <p className="text-sm text-slate-500">No active habits yet.</p>
         ) : (
           <ul className="flex flex-col gap-4">
-            {stats.habits.map(({ habit, rate, completed, scheduled }) => (
+            {stats.habits.map(({ habit, rate, scheduled }) => (
               <li key={habit.id}>
                 <div className="mb-1.5 flex items-center gap-2 text-sm">
                   <span
@@ -122,9 +122,7 @@ export function ProfilePage() {
                     <Icon name={habit.icon} size={15} />
                   </span>
                   <span className="flex-1 truncate font-semibold text-slate-800">{habit.title}</span>
-                  <span className="tabular-nums text-xs text-slate-500">
-                    {completed}/{scheduled}
-                  </span>
+                  <span className="tabular-nums text-xs text-slate-500">{scheduled} scheduled</span>
                   <span className="w-10 text-right text-xs font-bold tabular-nums" style={{ color: habit.color }}>
                     {rate}%
                   </span>
