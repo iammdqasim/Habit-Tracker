@@ -44,7 +44,7 @@ export function Menu({ trigger, items, align = 'right', triggerClassName }: Menu
               exit={{ opacity: 0, scale: 0.95, y: -4 }}
               transition={{ duration: 0.12 }}
               className={cn(
-                'absolute z-50 mt-1 min-w-44 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-900/10',
+                'absolute z-50 mt-1 min-w-44 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 p-1 shadow-xl shadow-black/30',
                 align === 'right' ? 'right-0' : 'left-0',
               )}
             >
@@ -59,8 +59,8 @@ export function Menu({ trigger, items, align = 'right', triggerClassName }: Menu
                   className={cn(
                     'flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium transition-colors',
                     item.danger
-                      ? 'text-red-600 hover:bg-red-50'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+                      ? 'text-red-400 hover:bg-red-950/60'
+                      : 'text-slate-200 hover:bg-slate-800 hover:text-white',
                   )}
                 >
                   {item.icon && <Icon name={item.icon} size={15} />}

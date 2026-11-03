@@ -35,17 +35,28 @@
   }
 }
 
-html {
+:root {
   color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
   @apply bg-slate-50 text-slate-900 font-sans antialiased;
   overscroll-behavior-y: none;
   background-image:
-    radial-gradient(ellipse at top, rgba(16, 185, 129, 0.05) 0%, transparent 60%),
-    radial-gradient(ellipse at bottom, rgba(113, 113, 122, 0.05) 0%, transparent 70%);
+    radial-gradient(ellipse at top, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(148, 163, 184, 0.08) 0%, transparent 70%);
   background-attachment: fixed;
+}
+
+html.dark body {
+  @apply bg-slate-950 text-slate-100;
+  background-image:
+    radial-gradient(ellipse at top, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
 }
 
 ::selection {
@@ -57,15 +68,15 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(16, 185, 129, 0.06);
+  background: rgba(15, 23, 42, 0.12);
 }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, rgba(16, 185, 129, 0.7), rgba(5, 150, 105, 0.9));
   border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  border: 2px solid transparent;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(5, 150, 105, 0.9), rgba(4, 120, 87, 1));
+  background: linear-gradient(180deg, rgba(5, 150, 105, 0.92), rgba(4, 120, 87, 1));
 }
 
 .no-scrollbar::-webkit-scrollbar {
