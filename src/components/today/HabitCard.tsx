@@ -7,23 +7,26 @@ import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/Icon'
 import { useData } from '@/context/DataContext'
 import { DAY_ORDER, phaseColor } from '@/lib/constants'
-import type { Habit } from '@/lib/types'
+import type { Habit, Phase } from '@/lib/types'
 import { cn, todayStr } from '@/lib/utils'
 
 interface HabitCardProps {
   habit: Habit
   index: number
+  done?: boolean
+  onToggle?: () => void | Promise<void>
+  phase?: Phase
 }
 
-export function HabitCard({ habit, index }: HabitCardProps) {
+export function HabitCard({ habit, index, done: doneOverride, onToggle, phase: phaseOverride }: HabitCardProps) {
   const { toggleArchive, deleteHabit, setCompleted, isDoneOn } = useData()
   const [editing, setEditing] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
   const today = todayStr()
-  const phase = Array.isArray(habit.phase) ? habit.phase[0] : habit.phase
-  const done = isDoneOn(habit.id, today, phase)
+  const phase = phaseOverride ?? (Array.isArray(habit.phase) ? habit.phase[0] : habit.phase)
+  const done = doneOverride ?? isDoneOn(habit.id, today, phase)
 
   const remove = async () => {
     setDeleting(true)
@@ -38,6 +41,10 @@ export function HabitCard({ habit, index }: HabitCardProps) {
   }
 
   const toggleDone = async () => {
+    if (onToggle) {
+      await onToggle()
+      return
+    }
     await setCompleted(habit.id, today, !done, phase)
   }
 
@@ -96,13 +103,14 @@ export function HabitCard({ habit, index }: HabitCardProps) {
         triggerClassName="grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
         trigger={<Icon name="more" size={16} />}
         items={[
+          { label: done ? 'Completed' : 'Complete', onClick: toggleDone, icon: 'check' },
           { label: 'Edit', onClick: () => setEditing(true), icon: 'edit' },
+          { label: 'Delete', onClick: () => setConfirming(true), icon: 'trash', danger: true },
           {
             label: habit.archived ? 'Restore' : 'Archive',
             onClick: () => toggleArchive(habit),
             icon: habit.archived ? 'restore' : 'archive',
           },
-          { label: 'Delete', onClick: () => setConfirming(true), icon: 'trash', danger: true },
         ]}
       />
 
