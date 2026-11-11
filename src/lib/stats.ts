@@ -8,12 +8,14 @@ export function isDone(
   date: string,
   phase?: Phase,
 ): boolean {
-  return completions.some(
-    (c) =>
-      c.habitId === habitId &&
-      c.date === date &&
-      (phase == null || c.phase === phase || c.phase == null),
+  const completionSet = new Set(
+    completions
+      .filter((c) => c.habitId === habitId && c.date === date)
+      .map((c) => c.phase ?? '__all__'),
   )
+
+  if (phase == null) return completionSet.size > 0
+  return completionSet.has(phase) || completionSet.has('__all__')
 }
 
 export function activeHabits(habits: readonly Habit[]): Habit[] {

@@ -87,9 +87,29 @@ export function DataProvider({ children }: { children: ReactNode }) {
     [active],
   )
 
+  const doneLookup = useMemo(() => {
+    const map = new Map<string, Set<Phase | '__all__'>>()
+
+    for (const completion of completions) {
+      const key = `${completion.habitId}::${completion.date}`
+      const phaseKey = completion.phase ?? '__all__'
+      const set = map.get(key) ?? new Set<Phase | '__all__'>()
+      set.add(phaseKey)
+      map.set(key, set)
+    }
+
+    return map
+  }, [completions])
+
   const isDoneOn = useCallback(
-    (habitId: string, date: string, phase?: Phase) => isDone(completions, habitId, date, phase),
-    [completions],
+    (habitId: string, date: string, phase?: Phase) => {
+      const key = `${habitId}::${date}`
+      const phases = doneLookup.get(key)
+      if (!phases) return false
+      if (phase == null) return phases.size > 0
+      return phases.has(phase) || phases.has('__all__')
+    },
+    [doneLookup],
   )
 
   const statusOf = useCallback(

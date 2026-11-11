@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { HabitForm } from '@/components/habit/HabitForm'
 import { Menu } from '@/components/ui/menu'
@@ -18,7 +18,13 @@ interface HabitCardProps {
   phase?: Phase
 }
 
-export function HabitCard({ habit, index, done: doneOverride, onToggle, phase: phaseOverride }: HabitCardProps) {
+export const HabitCard = memo(function HabitCard({
+  habit,
+  index,
+  done: doneOverride,
+  onToggle,
+  phase: phaseOverride,
+}: HabitCardProps) {
   const { toggleArchive, deleteHabit, setCompleted, isDoneOn } = useData()
   const [editing, setEditing] = useState(false)
   const [confirming, setConfirming] = useState(false)

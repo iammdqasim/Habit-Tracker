@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { HabitCard } from '@/components/today/HabitCard'
 import { ProgressRing } from '@/components/today/ProgressRing'
@@ -15,8 +15,8 @@ type Filter = 'all' | 'morning' | 'afternoon' | 'evening' | 'unassigned'
 export function TodayPage() {
   const { dueOn, isDoneOn, setCompleted, habits, stats, ready, error } = useData()
   const today = todayStr()
-  const due = dueOn(today)
-  const doneCount = due.filter((h) => isDoneOn(h.id, today)).length
+  const due = useMemo(() => dueOn(today), [dueOn, today])
+  const doneCount = useMemo(() => due.filter((h) => isDoneOn(h.id, today)).length, [due, isDoneOn, today])
   const allDone = due.length > 0 && doneCount === due.length
   const pct = due.length ? Math.round((doneCount / due.length) * 100) : 0
 
@@ -34,8 +34,11 @@ export function TodayPage() {
     wasAllDone.current = allDone
   }, [allDone])
 
-  const toggle = (habitId: string, phase?: 'morning' | 'afternoon' | 'evening') =>
-    setCompleted(habitId, today, !isDoneOn(habitId, today, phase), phase)
+  const toggle = useCallback(
+    (habitId: string, phase?: 'morning' | 'afternoon' | 'evening') =>
+      setCompleted(habitId, today, !isDoneOn(habitId, today, phase), phase),
+    [isDoneOn, setCompleted, today],
+  )
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase()
@@ -53,12 +56,19 @@ export function TodayPage() {
     return list
   }, [due, filter, hideDone, isDoneOn, search, today])
 
-  const grouped = phases.map((p) => {
-    const habitsInPhase = visible.filter((h) => phaseIncludes(h.phase, p.id))
-    const doneInPhase = habitsInPhase.filter((h) => isDoneOn(h.id, today, p.id)).length
-    return { ...p, habits: habitsInPhase, done: doneInPhase }
-  })
-  const unassigned = visible.filter((h) => normalizePhases(h.phase).length === 0)
+  const grouped = useMemo(
+    () =>
+      phases.map((p) => {
+        const habitsInPhase = visible.filter((h) => phaseIncludes(h.phase, p.id))
+        const doneInPhase = habitsInPhase.filter((h) => isDoneOn(h.id, today, p.id)).length
+        return { ...p, habits: habitsInPhase, done: doneInPhase }
+      }),
+    [isDoneOn, phases, today, visible],
+  )
+  const unassigned = useMemo(
+    () => visible.filter((h) => normalizePhases(h.phase).length === 0),
+    [visible],
+  )
 
   return (
     <div className="relative mx-auto max-w-2xl px-4 pb-28 pt-6 sm:pb-10">
