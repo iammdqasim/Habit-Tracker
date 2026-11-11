@@ -3,17 +3,19 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { TodayPage } from '@/pages/Today'
 import { CalendarPage } from '@/pages/Calendar'
 import { ProfilePage } from '@/pages/Profile'
+import { SettingsPage } from '@/pages/Settings'
 import { useAuth } from '@/context/AuthContext'
 import { Icon } from '@/components/ui/Icon'
 import { cn } from '@/lib/utils'
 
-type View = 'today' | 'calendar' | 'profile'
+type View = 'today' | 'calendar' | 'profile' | 'settings'
 type Theme = 'light' | 'dark'
 
 const NAV: { id: View; label: string; icon: string }[] = [
   { id: 'today', label: 'Today', icon: 'bolt' },
   { id: 'calendar', label: 'Calendar', icon: 'calendar' },
   { id: 'profile', label: 'Profile', icon: 'chart' },
+  { id: 'settings', label: 'Settings', icon: 'settings' },
 ]
 
 const THEME_KEY = 'discipline-theme'
@@ -137,13 +139,14 @@ export function Shell() {
               {view === 'today' && <TodayPage />}
               {view === 'calendar' && <CalendarPage />}
               {view === 'profile' && <ProfilePage />}
+              {view === 'settings' && <SettingsPage />}
             </motion.div>
           </AnimatePresence>
         </main>
       </div>
 
       <nav className={cn('fixed inset-x-0 bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden', isDark ? 'border-slate-800 bg-slate-900/85' : 'border-slate-200 bg-white/85')}>
-        <div className={cn('grid grid-cols-3 backdrop-blur-xl', isDark ? 'bg-slate-900/95' : 'bg-white/95')}>
+        <div className={cn('grid grid-cols-4 backdrop-blur-xl', isDark ? 'bg-slate-900/95' : 'bg-white/95')}>
           {NAV.map((item) => (
             <button
               key={item.id}
