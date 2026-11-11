@@ -23,7 +23,7 @@ import { db } from '@/lib/firebase'
 import { useAuth } from '@/context/AuthContext'
 import { PHASES } from '@/lib/constants'
 import type { Completion, DayStatus, Habit, NewHabit, Phase, Stats } from '@/lib/types'
-import { dayStatus, computeStats, isDone } from '@/lib/stats'
+import { dayStatus, computeStats } from '@/lib/stats'
 import { isScheduled } from '@/lib/utils'
 
 interface DataContextValue {
