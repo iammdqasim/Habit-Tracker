@@ -147,4 +147,4 @@ export const HabitCard = memo(function HabitCard({
       <HabitForm open={editing} onClose={() => setEditing(false)} habit={habit} />
     </motion.div>
   )
-}
+})
