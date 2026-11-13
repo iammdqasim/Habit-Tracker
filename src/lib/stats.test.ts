@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { computeStreaks } from './streak'
-import { computeStats, dayStatus, isDone } from './stats'
+import { completionTone, computeStats, dayStatus, isDone } from './stats'
 import { normalizePhases, phaseIncludes } from './constants'
 import type { Completion, Habit } from './types'
 
@@ -53,6 +53,15 @@ const habit = (id: string, days: number[]): Habit => ({
 })
 
 const done = (habitId: string, date: string) => ({ habitId, date, completedAt: 'x' })
+
+describe('completionTone', () => {
+  it('uses green for full completion, yellow for 30-99%, and red for under 30%', () => {
+    expect(completionTone(0, 2)).toBe('red')
+    expect(completionTone(1, 2)).toBe('yellow')
+    expect(completionTone(2, 2)).toBe('green')
+    expect(completionTone(0, 0)).toBe('neutral')
+  })
+})
 
 describe('dayStatus', () => {
   const habits = [habit('a', [0, 2, 4]), habit('b', [0, 3])] // Sun, Tue, Thu / Sun, Wed
