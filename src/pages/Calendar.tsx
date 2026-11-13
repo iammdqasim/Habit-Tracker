@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/Icon'
 import { useData } from '@/context/DataContext'
 import { DAY_ORDER } from '@/lib/constants'
+import { completionTone } from '@/lib/stats'
 import { fmtLong, toDateStr, todayStr } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 export function CalendarPage() {
-  const { dueOn, ready } = useData()
+  const { dueOn, ready, isDoneOn } = useData()
   const today = todayStr()
   const [viewMonth, setViewMonth] = useState(() => {
     const d = new Date()
@@ -74,27 +75,44 @@ export function CalendarPage() {
               const dateStr = toDateStr(d)
               const inMonth = d.getMonth() === viewMonth.getMonth()
               const isToday = dateStr === today
-              const hasHabits = dueOn(dateStr).length > 0
+              const due = dueOn(dateStr)
+              const done = due.filter((habit) => isDoneOn(habit.id, dateStr)).length
+              const tone = completionTone(done, due.length)
+              const toneStyles: Record<typeof tone, { background: string; borderColor: string; text: string }> = {
+                green: { background: 'rgba(16, 185, 129, 0.24)', borderColor: 'rgba(52, 211, 153, 0.8)', text: 'text-emerald-50' },
+                yellow: { background: 'rgba(251, 191, 36, 0.26)', borderColor: 'rgba(250, 204, 21, 0.8)', text: 'text-yellow-50' },
+                red: { background: 'rgba(239, 68, 68, 0.24)', borderColor: 'rgba(248, 113, 113, 0.8)', text: 'text-red-50' },
+                neutral: { background: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(51, 65, 85, 1)', text: 'text-slate-200' },
+              }
+
+              const style = tone === 'neutral' ? undefined : {
+                background: toneStyles[tone].background,
+                borderColor: toneStyles[tone].borderColor,
+              }
 
               return (
                 <button
                   key={i}
                   onClick={() => setSelected(dateStr)}
+                  title={due.length > 0 ? `${done}/${due.length} habits done` : 'No habits scheduled'}
                   className={cn(
-                    'group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-sm transition-colors hover:border-slate-700 hover:bg-slate-900',
+                    'group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border text-sm transition-colors hover:border-slate-700',
                     !inMonth && 'opacity-40',
+                    tone === 'neutral' ? 'border-slate-800 bg-slate-950' : 'shadow-sm',
+                    toneStyles[tone].text,
                   )}
+                  style={style}
                 >
                   {isToday && (
                     <span className="absolute inset-0 rounded-xl ring-2 ring-inset ring-emerald-500/70" />
                   )}
-                  <span className={cn('font-semibold text-slate-200', isToday && 'text-white')}>
+                  <span className={cn('font-semibold', isToday && 'text-white')}>
                     {d.getDate()}
                   </span>
                   <span
                     className={cn(
                       'mt-1 h-1.5 w-1.5 rounded-full',
-                      hasHabits ? 'bg-emerald-500' : 'bg-slate-600 group-hover:bg-slate-500',
+                      due.length > 0 ? (tone === 'green' ? 'bg-emerald-400' : tone === 'yellow' ? 'bg-yellow-400' : 'bg-red-400') : 'bg-slate-600 group-hover:bg-slate-500',
                     )}
                   />
                 </button>

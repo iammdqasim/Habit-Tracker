@@ -18,6 +18,14 @@ export function isDone(
   return completionSet.has(phase) || completionSet.has('__all__')
 }
 
+export function completionTone(done: number, total: number): 'green' | 'yellow' | 'red' | 'neutral' {
+  if (total <= 0) return 'neutral'
+  const percent = (done / total) * 100
+  if (percent >= 100) return 'green'
+  if (percent >= 30) return 'yellow'
+  return 'red'
+}
+
 export function activeHabits(habits: readonly Habit[]): Habit[] {
   return habits.filter((h) => !h.archived)
 }
