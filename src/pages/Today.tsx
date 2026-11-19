@@ -93,7 +93,63 @@ export function TodayPage() {
 
   return (
     <div className="relative mx-auto max-w-2xl px-4 pb-28 pt-6 sm:pb-10">
-      {celebrationVisible && <Confetti />}
+      <AnimatePresence>
+        {celebrationVisible && (
+          <motion.div
+            className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-slate-950/35 backdrop-blur-[2px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setCelebrationVisible(false)}
+            />
+            <Confetti count={96} />
+
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="All habits completed"
+              initial={{ scale: 0.72, y: 24, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.92, y: 12, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.08 }}
+              className="relative z-10 w-full max-w-sm overflow-hidden rounded-[2rem] border border-white/50 bg-white/95 px-7 py-8 text-center shadow-[0_24px_80px_rgba(15,23,42,0.28)]"
+            >
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-emerald-400 via-sky-400 via-amber-300 to-fuchsia-400" />
+              <motion.div
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', delay: 0.18, bounce: 0.55 }}
+                className="mx-auto grid h-16 w-16 place-items-center rounded-full border-4 border-emerald-100 bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
+              >
+                <Icon name="check" size={34} strokeWidth={3} />
+              </motion.div>
+
+              <p className="mt-5 text-xs font-bold uppercase tracking-[0.28em] text-emerald-600">
+                100% complete
+              </p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-900">
+                You did it! 🎉
+              </h2>
+              <p className="mx-auto mt-3 max-w-xs text-sm leading-6 text-slate-500">
+                Every habit for today is finished. You showed up, stayed focused, and earned this moment.
+              </p>
+
+              <Button
+                className="mt-6 w-full border-0 bg-slate-900 text-white shadow-lg shadow-slate-900/15 hover:bg-slate-800"
+                onClick={() => setCelebrationVisible(false)}
+              >
+                Amazing work
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {error && (
         <div className="mb-4 flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
