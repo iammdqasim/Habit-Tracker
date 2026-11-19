@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { HabitCard } from '@/components/today/HabitCard'
 import { ProgressRing } from '@/components/today/ProgressRing'
 import { Confetti } from '@/components/today/Confetti'
@@ -16,13 +16,26 @@ export function TodayPage() {
   const { dueOn, isDoneOn, setCompleted, habits, stats, ready, error } = useData()
   const today = todayStr()
   const due = useMemo(() => dueOn(today), [dueOn, today])
-  const doneCount = useMemo(() => due.filter((h) => isDoneOn(h.id, today)).length, [due, isDoneOn, today])
+  const habitDoneToday = useCallback(
+    (habit: (typeof due)[number]) => {
+      const phases = normalizePhases(habit.phase)
+      return phases.length
+        ? phases.every((phase) => isDoneOn(habit.id, today, phase))
+        : isDoneOn(habit.id, today)
+    },
+    [isDoneOn, today],
+  )
+  const doneCount = useMemo(
+    () => due.filter((habit) => habitDoneToday(habit)).length,
+    [due, habitDoneToday],
+  )
   const allDone = due.length > 0 && doneCount === due.length
   const pct = due.length ? Math.round((doneCount / due.length) * 100) : 0
 
   const [formOpen, setFormOpen] = useState(false)
-  const [bursts, setBursts] = useState(1)
+  const [celebrationVisible, setCelebrationVisible] = useState(false)
   const wasAllDone = useRef(false)
+  const celebrationTimer = useRef<number | null>(null)
   const [filter, setFilter] = useState<Filter>('all')
   const [hideDone, setHideDone] = useState(false)
   const [search, setSearch] = useState('')
@@ -30,8 +43,16 @@ export function TodayPage() {
   const focusPct = due.length ? Math.round((doneCount / due.length) * 100) : 0
 
   useEffect(() => {
-    if (allDone && !wasAllDone.current) setBursts((b) => b + 1)
+    if (allDone && !wasAllDone.current) {
+      setCelebrationVisible(true)
+      if (celebrationTimer.current !== null) window.clearTimeout(celebrationTimer.current)
+      celebrationTimer.current = window.setTimeout(() => setCelebrationVisible(false), 5000)
+    }
     wasAllDone.current = allDone
+
+    return () => {
+      if (celebrationTimer.current !== null) window.clearTimeout(celebrationTimer.current)
+    }
   }, [allDone])
 
   const toggle = useCallback(
@@ -72,7 +93,7 @@ export function TodayPage() {
 
   return (
     <div className="relative mx-auto max-w-2xl px-4 pb-28 pt-6 sm:pb-10">
-      {allDone && <Confetti key={bursts} />}
+      {celebrationVisible && <Confetti />}
 
       {error && (
         <div className="mb-4 flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
