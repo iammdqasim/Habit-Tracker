@@ -173,8 +173,13 @@ function DayDetailModal({ date, onClose }: { date: string | null; onClose: () =>
                     type="button"
                     aria-label={wholeDone ? `Mark ${habit.title} as not done` : `Mark ${habit.title} as done`}
                     onClick={() => {
-                      if (phases.length) phases.forEach((phase) => toggleHabit(habit.id, phase))
-                      else toggleHabit(habit.id)
+                      if (phases.length) {
+                        phases.forEach((phase) => {
+                          void setCompleted(habit.id, date, !wholeDone, phase)
+                        })
+                      } else {
+                        void setCompleted(habit.id, date, !wholeDone)
+                      }
                     }}
                     className={cn(
                       'grid h-9 w-9 shrink-0 place-items-center rounded-lg border transition-all',

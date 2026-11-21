@@ -82,7 +82,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const dueOn = useCallback(
     (date: string) =>
       active
-        .filter((h) => isScheduled(h, date))
+        .filter((habit) => habit.createdAt.slice(0, 10) <= date && isScheduled(habit, date))
         .sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
     [active],
   )
