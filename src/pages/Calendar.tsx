@@ -76,7 +76,12 @@ export function CalendarPage() {
               const inMonth = d.getMonth() === viewMonth.getMonth()
               const isToday = dateStr === today
               const due = dueOn(dateStr)
-              const done = due.filter((habit) => isDoneOn(habit.id, dateStr)).length
+              const done = due.filter((habit) => {
+                const phases = normalizePhases(habit.phase)
+                return phases.length
+                  ? phases.every((phase) => isDoneOn(habit.id, dateStr, phase))
+                  : isDoneOn(habit.id, dateStr)
+              }).length
               const tone = completionTone(done, due.length)
               const toneStyles: Record<typeof tone, { background: string; borderColor: string; text: string }> = {
                 green: { background: 'rgba(16, 185, 129, 0.24)', borderColor: 'rgba(52, 211, 153, 0.8)', text: 'text-emerald-50' },
@@ -134,10 +139,15 @@ export function CalendarPage() {
 }
 
 function DayDetailModal({ date, onClose }: { date: string | null; onClose: () => void }) {
-  const { dueOn, habits } = useData()
+  const { dueOn, habits, isDoneOn, setCompleted } = useData()
   if (!date) return null
 
   const due = dueOn(date)
+
+  const toggleHabit = (habitId: string, phase?: 'morning' | 'afternoon' | 'evening') => {
+    const done = isDoneOn(habitId, date, phase)
+    void setCompleted(habitId, date, !done, phase)
+  }
 
   return (
     <Modal
@@ -150,19 +160,69 @@ function DayDetailModal({ date, onClose }: { date: string | null; onClose: () =>
         <p className="py-6 text-center text-sm text-slate-400">No habits scheduled for this day.</p>
       ) : (
         <ul className="flex flex-col gap-2">
-          {due.map((h) => (
-            <li key={h.id}>
-              <div className="flex w-full items-center gap-3 rounded-xl border border-slate-800 bg-slate-950 px-3 py-3 text-left">
-                <span
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
-                  style={{ background: `${h.color}1a`, color: h.color }}
-                >
-                  <Icon name={h.icon} size={15} />
-                </span>
-                <span className="text-sm font-medium text-slate-100">{h.title}</span>
-              </div>
-            </li>
-          ))}
+          {due.map((habit) => {
+            const phases = normalizePhases(habit.phase)
+            const wholeDone = phases.length
+              ? phases.every((phase) => isDoneOn(habit.id, date, phase))
+              : isDoneOn(habit.id, date)
+
+            return (
+              <li key={habit.id}>
+                <div className="flex w-full items-center gap-3 rounded-xl border border-slate-800 bg-slate-950 px-3 py-3">
+                  <button
+                    type="button"
+                    aria-label={wholeDone ? `Mark ${habit.title} as not done` : `Mark ${habit.title} as done`}
+                    onClick={() => {
+                      if (phases.length) phases.forEach((phase) => toggleHabit(habit.id, phase))
+                      else toggleHabit(habit.id)
+                    }}
+                    className={cn(
+                      'grid h-9 w-9 shrink-0 place-items-center rounded-lg border transition-all',
+                      wholeDone
+                        ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
+                        : 'border-slate-700 bg-slate-900 text-slate-500 hover:border-slate-600 hover:text-slate-300',
+                    )}
+                  >
+                    {wholeDone ? <Icon name="check" size={17} strokeWidth={2.5} /> : <span className="h-2 w-2 rounded-full bg-slate-600" />}
+                  </button>
+
+                  <span
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: `${habit.color}1a`, color: habit.color }}
+                  >
+                    <Icon name={habit.icon} size={15} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <span className={cn('text-sm font-medium', wholeDone ? 'text-slate-400 line-through' : 'text-slate-100')}>
+                      {habit.title}
+                    </span>
+                    {phases.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {phases.map((phase) => {
+                          const done = isDoneOn(habit.id, date, phase)
+                          return (
+                            <button
+                              key={phase}
+                              type="button"
+                              onClick={() => toggleHabit(habit.id, phase)}
+                              className={cn(
+                                'rounded-full border px-2 py-1 text-[10px] font-bold capitalize transition-colors',
+                                done
+                                  ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
+                                  : 'border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-600',
+                              )}
+                            >
+                              {done ? '✓ ' : ''}{phase}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            )
+          })}
         </ul>
       )}
 
