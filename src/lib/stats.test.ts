@@ -126,6 +126,21 @@ describe('computeStats', () => {
     expect(stats.successRate30).toBe(100)
   })
 
+  it('counts three consecutive complete days when all assigned phases are done', () => {
+    const daily = [{ ...habit('d', [0, 1, 2, 3, 4, 5, 6]), phase: ['morning', 'evening'] as const }]
+    const completions: Completion[] = [
+      { habitId: 'd', date: '2026-08-11', completedAt: 'x', phase: 'morning' },
+      { habitId: 'd', date: '2026-08-11', completedAt: 'x', phase: 'evening' },
+      { habitId: 'd', date: '2026-08-12', completedAt: 'x', phase: 'morning' },
+      { habitId: 'd', date: '2026-08-12', completedAt: 'x', phase: 'evening' },
+      { habitId: 'd', date: '2026-08-13', completedAt: 'x', phase: 'morning' },
+      { habitId: 'd', date: '2026-08-13', completedAt: 'x', phase: 'evening' },
+    ]
+    const stats = computeStats(daily as Habit[], completions, '2026-08-13')
+    expect(stats.currentStreak).toBe(3)
+    expect(stats.longestStreak).toBe(3)
+  })
+
   it('includes today in the streak once completed', () => {
     const daily = [habit('d', [0, 1, 2, 3, 4, 5, 6])]
     const completions = [done('d', '2026-08-12'), done('d', '2026-08-13')]
