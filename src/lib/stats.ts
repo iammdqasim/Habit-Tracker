@@ -44,7 +44,11 @@ export function dayStatus(
     (h) => !h.archived && h.createdAt.slice(0, 10) <= date && isScheduled(h, date),
   )
   if (due.length === 0) return 'neutral'
-  const done = due.filter((h) => isDone(completions, h.id, date)).length
+  const done = due.filter((habit) => {
+    const phases = normalizePhases(habit.phase)
+    if (phases.length === 0) return isDone(completions, habit.id, date)
+    return phases.every((phase) => isDone(completions, habit.id, date, phase))
+  }).length
   if (done === due.length) return 'all'
   if (done > 0) return 'partial'
   return 'missed'
