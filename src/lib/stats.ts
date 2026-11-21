@@ -1,5 +1,6 @@
 import type { Completion, DayStatus, Habit, Phase, Stats } from './types'
 import { addDays, isScheduled, todayStr } from './utils'
+import { normalizePhases } from './constants'
 import { computeStreaks } from './streak'
 
 export function isDone(
